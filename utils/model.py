@@ -13,6 +13,7 @@ class BaseModel:
         self.model = None
         self.criterion = None
         self.optimizer = None
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     def weight(self):
         return self.model.weight.data.numpy()

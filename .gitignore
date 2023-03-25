@@ -6,3 +6,4 @@ venv_*
 .vscode
 .DS_Store
 __pycache__
+/ann/data/
