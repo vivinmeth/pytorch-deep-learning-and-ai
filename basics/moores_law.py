@@ -64,7 +64,7 @@ print(w)
 """
 
 model = LinearRegressor(model_name="moores_law_lr", auto_save=True, optimizer_params={'lr': 0.1, 'momentum': 0.7})
-_, _, loses = model.fit(X, Y, n_epochs=100)
+loses = model.fit(X, Y, n_epochs=100)
 plt.plot(loses)
 
 predicted = model.predict(X)
