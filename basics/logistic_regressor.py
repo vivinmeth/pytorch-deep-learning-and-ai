@@ -67,6 +67,7 @@ class LogisticRegressor(BaseModel):
             test_acc = np.mean(p_test == Y_test.data.numpy())
             return train_acc, test_acc
 
+
 class LogisticRegressorV2(LogisticRegressor):
     def __init__(self, n, d, model_name='logistic_regressor_v2', model_path='./', auto_save=False):
         super().__init__(n, d, model_name=model_name, model_path=model_path, auto_save=auto_save, auto_load=False)
