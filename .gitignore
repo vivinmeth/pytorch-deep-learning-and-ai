@@ -2,3 +2,5 @@ venv_*
 **model**.ckpt
 .idea
 .vscode
+.DS_Store
+__pycache__

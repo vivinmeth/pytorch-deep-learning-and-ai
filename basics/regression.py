@@ -17,42 +17,50 @@ Y = 0.5 * X + 1 + np.random.randn(N)
 plt.scatter(X, Y)
 
 
-model = nn.Linear(1, 1)
+def train_linear_model(X, Y, optimizer_params=None, n_epochs=30):
+    model = nn.Linear(1, 1)
 
 
-criterion = nn.MSELoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+    criterion = nn.MSELoss()
+
+    if not optimizer_params:
+        optimizer_params = {
+            'lr': 0.1,
+        }
+
+    optimizer = torch.optim.SGD(model.parameters(), **optimizer_params)
+
+    inputs = torch.from_numpy(X.astype(np.float32))
+    targets = torch.from_numpy(Y.astype(np.float32))
+
+    type(inputs)
+    type(targets)  # torch.Tensor, torch.Tensor
+
+    losses = []
+    outputs = None
+
+    for it in range(n_epochs):
+        # zero the parameter gradients
+        optimizer.zero_grad()
+
+        # forward
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
+
+        # save the loss
+        losses.append(loss.item())
+
+        # backward and optimize
+        loss.backward()
+        optimizer.step()
+
+        print(f'Epoch {it+1}/{n_epochs}, Loss: {loss.item():.4f}')
+    return model, inputs, outputs, losses
 
 
 X = X.reshape(N, 1)
 Y = Y.reshape(N, 1)
-
-inputs = torch.from_numpy(X.astype(np.float32))
-targets = torch.from_numpy(Y.astype(np.float32))
-
-type(inputs)
-type(targets)  # torch.Tensor, torch.Tensor
-
-
-n_epochs = 30
-losses = []
-
-for it in range(n_epochs):
-    # zero the parameter gradients
-    optimizer.zero_grad()
-
-    # forward
-    outputs = model(inputs)
-    loss = criterion(outputs, targets)
-
-    # save the loss
-    losses.append(loss.item())
-
-    # backward and optimize
-    loss.backward()
-    optimizer.step()
-
-    print(f'Epoch {it+1}/{n_epochs}, Loss: {loss.item():.4f}')
+model, inputs, outputs, _ = train_linear_model(X, Y)
 
 # Way 1
 predicted = model(inputs).detach().numpy()
