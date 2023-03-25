@@ -54,9 +54,23 @@ for it in range(n_epochs):
 
     print(f'Epoch {it+1}/{n_epochs}, Loss: {loss.item():.4f}')
 
-
+# Way 1
 predicted = model(inputs).detach().numpy()
 plt.scatter(X, Y, label='Original data', s=25)
 plt.plot(X, predicted, label='Fitted line')
 plt.legend()
 plt.show()
+
+
+# another way to use model
+with torch.no_grad():
+    predicted = model(inputs).numpy()
+print(predicted)
+
+
+
+# Model efficiency
+w = model.weight.data.numpy()
+b = model.bias.data.numpy()
+print(w, b)
+
