@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from basics.regression import train_linear_model
+from basics.regression import LinearRegressor
 
 # get the data
 if os.path.isfile('moore.csv'):
@@ -47,7 +47,7 @@ X = X.astype(np.float32)
 Y = Y.astype(np.float32)
 
 
-model, inputs, outputs, losses = train_linear_model(X, Y, optimizer_params={'lr': 0.1, 'momentum': 0.7}, n_epochs=100)
+model, inputs, outputs, losses = LinearRegressor.train_linear_model(X, Y, optimizer_params={'lr': 0.1, 'momentum': 0.7}, n_epochs=100)
 
 plt.plot(losses)
 plt.show()
