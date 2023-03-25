@@ -18,7 +18,7 @@ class LogisticRegressor(BaseModel):
         self.N = n
         self.D = d
         self.model = nn.Sequential(
-            nn.Linear(D, 1),
+            nn.Linear(self.D, 1),
             nn.Sigmoid()
         )
         self.criterion = nn.BCELoss()
@@ -72,7 +72,7 @@ class LogisticRegressorV2(LogisticRegressor):
     def __init__(self, n, d, model_name='logistic_regressor_v2', model_path='./', auto_save=False):
         super().__init__(n, d, model_name=model_name, model_path=model_path, auto_save=auto_save, auto_load=False)
         self.auto_load = True
-        self.model = nn.Linear(D, 1)
+        self.model = nn.Linear(self.D, 1)
         self.criterion = nn.BCEWithLogitsLoss()
         self.auto_loader()
 
