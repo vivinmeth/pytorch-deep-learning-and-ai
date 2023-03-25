@@ -12,8 +12,9 @@ from utils.model import BaseModel
 
 class LogisticRegressor(BaseModel):
 
-    def __init__(self, n, d, model_name='logistic_regressor', model_path='./', auto_save=False):
+    def __init__(self, n, d, model_name='logistic_regressor', model_path='./', auto_save=False, auto_load=True):
         super().__init__(model_name, model_path, auto_save)
+        self.auto_load = auto_load
         self.N = n
         self.D = d
         self.model = nn.Sequential(
@@ -22,7 +23,7 @@ class LogisticRegressor(BaseModel):
         )
         self.criterion = nn.BCELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters())
-        self.auto_load()
+        self.auto_loader()
 
     def fit(self, X_train, Y_train, X_test, Y_test, n_epochs=1000):
         train_losses = np.zeros(n_epochs)
@@ -66,6 +67,29 @@ class LogisticRegressor(BaseModel):
             test_acc = np.mean(p_test == Y_test.data.numpy())
             return train_acc, test_acc
 
+class LogisticRegressorV2(LogisticRegressor):
+    def __init__(self, n, d, model_name='logistic_regressor_v2', model_path='./', auto_save=False):
+        super().__init__(n, d, model_name=model_name, model_path=model_path, auto_save=auto_save, auto_load=False)
+        self.auto_load = True
+        self.model = nn.Linear(D, 1)
+        self.criterion = nn.BCEWithLogitsLoss()
+        self.auto_loader()
+
+    def predict(self, X):
+        with torch.no_grad():
+            return self.model(X)
+
+    def score(self, X_train, Y_train, X_test, Y_test):
+        with torch.no_grad():
+            p_train = self.predict(X_train)
+            p_train = (p_train.numpy() > 0)
+            train_acc = np.mean(p_train == Y_train.numpy())
+
+            p_test = self.predict(X_test)
+            p_test = (p_test.numpy() > 0)
+            test_acc = np.mean(p_test == Y_test.numpy())
+            return train_acc, test_acc
+
 
 if __name__ == '__main__':
     from sklearn.datasets import load_breast_cancer
@@ -101,3 +125,14 @@ if __name__ == '__main__':
     train_acc, test_acc = model.score(X_train, Y_train, X_test, Y_test)
     print(f'Train accuracy: {train_acc:.4f}, Test accuracy: {test_acc:.4f}')
 
+    print("Logic Regressor V2")
+    model = LogisticRegressorV2(N, D, auto_save=True)
+    train_losses, test_losses = model.fit(X_train, Y_train, X_test, Y_test)
+
+    plt.plot(train_losses, label='train loss')
+    plt.plot(test_losses, label='test loss')
+    plt.legend()
+    plt.show()
+
+    train_acc, test_acc = model.score(X_train, Y_train, X_test, Y_test)
+    print(f'Train accuracy: {train_acc:.4f}, Test accuracy: {test_acc:.4f}')

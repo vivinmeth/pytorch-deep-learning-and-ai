@@ -12,6 +12,7 @@ class LinearRegressor(BaseModel):
 
     def __init__(self, model_name='linear_regressor', model_path='./', optimizer_params=None, auto_save=False):
         super().__init__(model_name, model_path, auto_save)
+        self.auto_load = True
         self.model = nn.Linear(1, 1)
         self.criterion = nn.MSELoss()
 
@@ -20,7 +21,7 @@ class LinearRegressor(BaseModel):
                 'lr': 0.1,
             }
         self.optimizer = torch.optim.SGD(self.model.parameters(), **optimizer_params)
-        self.auto_load()
+        self.auto_loader()
 
     def fit(self, X, Y, n_epochs=30):
         inputs = torch.from_numpy(X.astype(np.float32))

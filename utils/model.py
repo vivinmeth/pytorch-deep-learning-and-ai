@@ -5,7 +5,7 @@ import torch
 
 
 class BaseModel:
-
+    auto_load = False
     def __init__(self, model_name='torch_base', model_path='./', auto_save=False):
         self.auto_save = auto_save
         self.model_name = model_name
@@ -20,8 +20,8 @@ class BaseModel:
     def bias(self):
         return self.model.bias.data.numpy()
 
-    def auto_load(self):
-        if os.path.exists(self.model_path):
+    def auto_loader(self):
+        if self.auto_load and os.path.exists(self.model_path):
             print(f'model found at {self.model_path}')
             self.load()
 
