@@ -1,3 +1,5 @@
+import os.path
+
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
@@ -6,7 +8,10 @@ import numpy as np
 
 class LinearRegressor:
 
-    def __init__(self, optimizer_params=None):
+    def __init__(self, model_name='linear_regressor', model_path='./', optimizer_params=None, auto_save=False):
+        self.auto_save = auto_save
+        self.model_name = model_name
+        self.model_path = os.path.abspath(f"{model_path}/{model_name}.model")
         self.model = nn.Linear(1, 1)
         self.criterion = nn.MSELoss()
 
@@ -15,12 +20,23 @@ class LinearRegressor:
                 'lr': 0.1,
             }
         self.optimizer = torch.optim.SGD(self.model.parameters(), **optimizer_params)
+        if os.path.exists(self.model_path):
+            print(f'model found at {self.model_path}')
+            self.load()
 
     def weight(self):
         return self.model.weight.data.numpy()
 
     def bias(self):
         return self.model.bias.data.numpy()
+
+    def load(self):
+        print("Loading model...")
+        self.model.load_state_dict(torch.load(self.model_path))
+
+    def save(self):
+        print("Saving model...")
+        torch.save(self.model.state_dict(), self.model_path)
 
     def fit(self, X, Y, n_epochs=30):
         inputs = torch.from_numpy(X.astype(np.float32))
@@ -29,6 +45,7 @@ class LinearRegressor:
         losses = []
         outputs = None
 
+        print(f"Training {self.model_name} for {n_epochs} epochs...")
         for it in range(n_epochs):
             # zero the parameter gradients
             self.optimizer.zero_grad()
@@ -45,14 +62,15 @@ class LinearRegressor:
             self.optimizer.step()
 
             print(f'Epoch {it + 1}/{n_epochs}, Loss: {loss.item():.4f}')
+        print(f"Training {self.model_name} complete!")
+        if self.auto_save:
+            self.save()
         return inputs, outputs, losses
-
 
     def predict(self, X):
         inputs = torch.from_numpy(X.astype(np.float32))
-        with torch.no_grad():
-            outputs = self.model(inputs).numpy()
-        return outputs
+        outputs = self.model(inputs)
+        return outputs.detach().numpy()
 
     def score(self, X, Y):
         inputs = torch.from_numpy(X.astype(np.float32))
@@ -119,9 +137,9 @@ if __name__ == '__main__':
 
     X = X.reshape(N, 1)
     Y = Y.reshape(N, 1)
-    model = LinearRegressor()
+    model = LinearRegressor(auto_save=True)
 
-    inputs, outputs, losses = model.fit(X, Y, n_epochs=100)
+    inputs, outputs, losses = model.fit(X, Y, n_epochs=30)
 
     plt.plot(losses)
 

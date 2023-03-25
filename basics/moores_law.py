@@ -46,7 +46,7 @@ plt.show()
 X = X.astype(np.float32)
 Y = Y.astype(np.float32)
 
-
+"""
 model, inputs, outputs, losses = LinearRegressor.train_linear_model(X, Y, optimizer_params={'lr': 0.1, 'momentum': 0.7}, n_epochs=100)
 
 plt.plot(losses)
@@ -60,4 +60,21 @@ plt.show()
 
 w = model.weight.data.numpy()
 print(w)
+
+"""
+
+model = LinearRegressor(model_name="moores_law_lr", auto_save=True, optimizer_params={'lr': 0.1, 'momentum': 0.7})
+_, _, loses = model.fit(X, Y, n_epochs=100)
+plt.plot(loses)
+
+predicted = model.predict(X)
+plt.scatter(X, Y, label='Original data', s=25)
+plt.plot(X, predicted, label='Fitted line')
+plt.legend()
+plt.show()
+
+
+w = model.weight()
+print(w)
+
 

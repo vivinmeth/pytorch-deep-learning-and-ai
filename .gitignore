@@ -1,5 +1,7 @@
 venv_*
-**model**.ckpt
+**.ckpt
+**.pth
+**.model
 .idea
 .vscode
 .DS_Store
