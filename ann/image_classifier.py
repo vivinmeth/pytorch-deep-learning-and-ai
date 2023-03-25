@@ -138,7 +138,7 @@ if __name__ == '__main__':
     X_test = test_dataset.data
     Y_test = test_dataset.targets
 
-    model = AnnImageClassifier()
+    model = AnnImageClassifier(auto_save=True)
     train_losses, test_losses = model.fit(train_dataset, test_dataset, n_epochs=10)
     model.score(train_dataset, test_dataset)
 
