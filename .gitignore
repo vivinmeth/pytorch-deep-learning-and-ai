@@ -1,0 +1,4 @@
+venv_*
+**model**.ckpt
+.idea
+.vscode
